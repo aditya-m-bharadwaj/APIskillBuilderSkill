@@ -1,0 +1,46 @@
+title: "[Q&A] "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Asking how to use the api-skill-builder skill to wrap a specific API?
+        You're in the right place.
+
+        > **Security note:** if you've found a defect in the skill text that
+        > would cause a generated project to violate the safety contract,
+        > **do not** post it here. File a private advisory at
+        > <https://github.com/aditya-m-bharadwaj/APIskillBuilderSkill/security/advisories/new>.
+
+  - type: textarea
+    id: goal
+    attributes:
+      label: What API are you trying to wrap?
+      description: Vendor name, what the API does, link to its docs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: stuck
+    attributes:
+      label: Where are you stuck?
+      description: Which step in the 14-step build process? What did the skill text say to do, and what happened?
+    validations:
+      required: false
+
+  - type: input
+    id: auth-model
+    attributes:
+      label: API auth model
+      description: bearer token / apikey+secret pair / OAuth / HMAC / other
+    validations:
+      required: false
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What have you tried?
+      description: Paste the relevant commands or skill steps you followed.
+      render: shell
+    validations:
+      required: false

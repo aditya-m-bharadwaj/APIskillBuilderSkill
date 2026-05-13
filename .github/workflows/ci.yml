@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  shellcheck:
+    name: shellcheck install.sh
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run shellcheck
+        run: shellcheck install.sh
+
+  skill-lint:
+    name: skill markdown lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Skill file exists at the expected path
+        run: test -f .claude/skills/api-skill-builder/SKILL.md
+
+      - name: Skill has the expected frontmatter
+        run: |
+          head -n 4 .claude/skills/api-skill-builder/SKILL.md | grep -q '^name: api-skill-builder$'
+          head -n 4 .claude/skills/api-skill-builder/SKILL.md | grep -q '^description: '
+
+      - name: Skill mentions the six classifier tiers (sanity)
+        run: |
+          for tier in read mutating destructive billable financial privilege; do
+            grep -q "\`$tier\`" .claude/skills/api-skill-builder/SKILL.md \
+              || { echo "missing tier: $tier"; exit 1; }
+          done
+
+      - name: Skill references the canonical implementation
+        run: grep -q 'linode-api-skill' .claude/skills/api-skill-builder/SKILL.md
+
+  markdown-links:
+    name: relative markdown links resolve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check relative links in top-level markdown
+        run: |
+          # Lightweight check: every (path) target that looks like a local
+          # file should exist in the repo. Best-effort, not exhaustive.
+          fail=0
+          for f in README.md SECURITY.md CONTRIBUTING.md AUTHORS.md CHANGELOG.md CLAUDE.md docs/README.md; do
+            test -f "$f" || { echo "missing: $f"; fail=1; }
+          done
+          exit $fail

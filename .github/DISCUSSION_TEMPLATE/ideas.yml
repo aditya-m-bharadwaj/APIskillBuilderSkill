@@ -1,0 +1,35 @@
+title: "[Idea] "
+labels: ["idea"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for how the skill should evolve? Share it here.
+        For concrete proposals you'd implement, you may prefer to open a
+        feature-request issue instead.
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: The idea
+      description: What would you change or add?
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why is this useful?
+      description: What gap does it close in the current build process?
+    validations:
+      required: false
+
+  - type: textarea
+    id: safety
+    attributes:
+      label: Safety implications
+      description: |
+        Does it touch the safety contract (the ten "Hard rules" in
+        `SKILL.md`)? If so, what's the new invariant?
+    validations:
+      required: false

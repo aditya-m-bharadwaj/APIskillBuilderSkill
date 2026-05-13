@@ -1,0 +1,32 @@
+title: "[Show & tell] "
+labels: ["show-and-tell"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Built a `<vendor>-api-skill` project using this skill? Share it.
+        Please redact tokens, account ids, and anything else you don't
+        want public.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What did you build?
+      description: One paragraph summary; which vendor, which workflows you covered.
+    validations:
+      required: true
+
+  - type: input
+    id: link
+    attributes:
+      label: Repo link (optional)
+    validations:
+      required: false
+
+  - type: textarea
+    id: surprises
+    attributes:
+      label: What surprised you? Anything the skill didn't anticipate?
+      description: Feedback that would help us improve the build process.
+    validations:
+      required: false

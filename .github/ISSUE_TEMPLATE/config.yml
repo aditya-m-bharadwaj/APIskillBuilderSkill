@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability (private report)
+    url: https://github.com/aditya-m-bharadwaj/APIskillBuilderSkill/security/advisories/new
+    about: |
+      Please DO NOT open a public issue for security defects in the skill text
+      (e.g. an instruction that would route a credential through a pipe the
+      AI can read). File a private security advisory instead. See SECURITY.md.
+  - name: Security policy and threat model
+    url: https://github.com/aditya-m-bharadwaj/APIskillBuilderSkill/blob/main/SECURITY.md
+    about: Read what the skill defends, what it does not, and how to report.
+  - name: Question or discussion
+    url: https://github.com/aditya-m-bharadwaj/APIskillBuilderSkill/discussions
+    about: For open-ended design questions, build-process feedback, or usage help.
