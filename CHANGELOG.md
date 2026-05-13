@@ -4,6 +4,10 @@ All notable changes are documented here. Format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
+### Skill
+
+- **`SKILL.md` — new Step 14: "Push and configure the GitHub repo".** Inserted between the initial commit (Step 13) and the live smoke test (renumbered to Step 15). Covers the About-panel description / website / topics, Features (Issues + Discussions + Wikis + Projects + Sponsorships all on), Pull-Request settings (squash-merge + auto-delete head branches), Code-security settings (private vulnerability reporting, Dependabot alerts/security updates, secret scanning, push protection), and a deferred-branch-protection note for solo alpha. The default is intentionally permissive: Wikis and Projects are *on* even though `docs/` is the canonical memory layer, because leaving them on costs nothing and lowers friction for external contributors. The step instructs the AI to run this immediately after the first push lands — without it, `SECURITY.md`'s "file a private security advisory" instruction is a dead link.
+
 ### Fixed
 
 - **`install.sh`** — replaced two `A && B || C` chains flagged by `shellcheck` SC2015 with explicit `if`/`else` forms. The original logic was correct (we wanted to swallow non-fatal failures), but shellcheck can't tell the two patterns apart. CI now passes the `shellcheck install.sh` step.

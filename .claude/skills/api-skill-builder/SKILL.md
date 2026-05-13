@@ -215,7 +215,56 @@ Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>   # actual 
 
 **Do NOT** bypass hooks (`--no-verify`, `--no-gpg-sign`). **Do NOT** commit if the operator has not explicitly told you to — draft the message and stop.
 
-### Step 14 — Live smoke test (if a token is available)
+### Step 14 — Push and configure the GitHub repo
+
+After the operator authorizes the push and the commit lands on `origin/main`, configure the GitHub repo. These settings are the alpha default; the operator can tighten them later (e.g. add branch protection) once the project has external contributors.
+
+**About panel** (top of the repo page):
+
+- **Description** — one sentence covering what the tool does and the safety pitch. Form: "`<vendor>-api-skill` — a safe, single-file Python CLI mediating the `<Vendor>` API, plus a matching Claude skill. Credential never enters AI context; every mutation is classifier-gated and audit-logged."
+- **Website** — leave blank, or point to the canonical reference (`https://github.com/aditya-m-bharadwaj/linode-api-skill`).
+- **Topics** — pick ~12 from: `claude-code`, `claude-skill`, `claude-agent-sdk`, `ai-safety`, `ai-agents`, `api-wrapper`, `cli`, `python`, `<vendor>` (e.g. `linode`, `porkbun`), `<vendor>-api`, `credential-management`, `audit-log`, `safety-classifier`.
+
+**Features** (Settings → General → Features):
+
+| Feature | Default | Why |
+| --- | --- | --- |
+| Issues | **on** | issue templates ship in `.github/ISSUE_TEMPLATE/` |
+| Discussions | **on** | discussion templates ship in `.github/DISCUSSION_TEMPLATE/` |
+| Wikis | **on** | enabled by default; the in-repo `docs/` memory layer is canonical, but leaving wikis on costs nothing and gives external contributors a low-friction surface |
+| Projects | **on** | enabled by default; same reasoning — no cost, optional surface for issue triage |
+| Sponsorships | **on** | `.github/FUNDING.yml` is in place |
+| Preserve this repository | **on** if eligible (Arctic Code Vault opt-in) | free, no downside |
+
+**Pull Requests** (Settings → General → Pull Requests):
+
+- Allow **squash** merging: **on**.
+- Allow merge commits / rebase merging: off for a solo alpha.
+- Always suggest updating PR branches: **on**.
+- Allow auto-merge: **on**.
+- Automatically delete head branches: **on**.
+
+**Code security** (Settings → Code security):
+
+- **Private vulnerability reporting**: **enable** — this is what `SECURITY.md` and `ISSUE_TEMPLATE/config.yml` direct reporters to.
+- **Dependabot alerts**: **enable** — catches `actions/*` version bumps even though the CLI has no Python deps.
+- **Dependabot security updates**: **enable**.
+- **Secret scanning** (free on public repos): **enable**.
+- **Push protection** (blocks pushes containing detected secrets): **enable**.
+- CodeQL / code scanning: optional — low value for a stdlib-only single-file CLI; skip unless extending later.
+
+**Branch protection** (Settings → Branches):
+
+- For a solo v0.x alpha: skip. The operator pushes directly to `main` per the established pattern.
+- Revisit once external contributors arrive: enable "Require a pull request before merging" + "Require status checks to pass" (CI green) on `main`.
+
+**Pages / Webhooks / Actions secrets**: leave as default. No docs site is published; no secrets are needed by CI.
+
+**Run this step right after the first push lands.** The default GitHub presets for a brand-new repo are not what the safety contract assumes — at minimum, private vulnerability reporting must be on (or `SECURITY.md`'s instructions are a dead link), and the description / topics must be set so users discover the project at all.
+
+After configuring, paste the live About-panel description and the comma-separated topic list back to the operator for verification.
+
+### Step 15 — Live smoke test (if a token is available)
 
 If the operator provides a scoped test credential, exercise the alpha end-to-end before declaring v0.1 done:
 
