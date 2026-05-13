@@ -47,16 +47,21 @@ warn() { printf '%s[warn]%s %s\n' "$YELLOW" "$RESET" "$*" >&2; }
 die()  { printf 'error: %s\n' "$*" >&2; exit 1; }
 
 # Decide source dir: existing checkout (script invoked from one) or clone.
-SCRIPT_DIR=$(cd "$(dirname "$0")" 2>/dev/null && pwd || true)
+if SCRIPT_DIR=$(cd "$(dirname "$0")" 2>/dev/null && pwd); then
+    :
+else
+    SCRIPT_DIR=""
+fi
 if [ -n "$SCRIPT_DIR" ] && [ -f "$SCRIPT_DIR/.claude/skills/api-skill-builder/SKILL.md" ]; then
     SRC_DIR="$SCRIPT_DIR"
     log "Using current checkout: $SRC_DIR"
 else
     log "Cloning $REPO_URL -> $HOME_DIR (ref=$REF)"
     if [ -d "$HOME_DIR/.git" ]; then
-        git -C "$HOME_DIR" fetch --quiet origin "$REF" \
-            && git -C "$HOME_DIR" checkout --quiet "$REF" \
-            && git -C "$HOME_DIR" pull --quiet --ff-only origin "$REF" 2>/dev/null || true
+        if git -C "$HOME_DIR" fetch --quiet origin "$REF" \
+            && git -C "$HOME_DIR" checkout --quiet "$REF"; then
+            git -C "$HOME_DIR" pull --quiet --ff-only origin "$REF" 2>/dev/null || true
+        fi
     else
         git clone --quiet --branch "$REF" "$REPO_URL" "$HOME_DIR" \
             || die "git clone failed"

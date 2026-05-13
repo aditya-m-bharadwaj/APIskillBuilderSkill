@@ -4,7 +4,9 @@ All notable changes are documented here. Format follows [Keep a Changelog](https
 
 ## [Unreleased]
 
-(nothing yet)
+### Fixed
+
+- **`install.sh`** — replaced two `A && B || C` chains flagged by `shellcheck` SC2015 with explicit `if`/`else` forms. The original logic was correct (we wanted to swallow non-fatal failures), but shellcheck can't tell the two patterns apart. CI now passes the `shellcheck install.sh` step.
 
 ## [0.1.0-alpha.1] — 2026-05-11 — initial public alpha
 
