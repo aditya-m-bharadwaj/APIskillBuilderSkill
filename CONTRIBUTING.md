@@ -74,6 +74,43 @@ This repo uses the same `docs/` memory layer as `linode-api-skill`. See `docs/RE
 - Material design decisions get an ADR at `docs/decisions/<NNNN>-<slug>.md`.
 - Documentation lands in the **same commit** as the code/skill change it documents, never as a trailing follow-up.
 
+## Contributing to the wiki
+
+The GitHub Wiki at <https://github.com/aditya-m-bharadwaj/APIskillBuilderSkill/wiki> is a **separate git repository** from this one (`<repo>.wiki.git`), with its own history, remote, and commit cadence. The two share a URL prefix and a UI tab on github.com — nothing more. Cloning this repo does not pull the wiki; editing one does not affect the other.
+
+The operator convention is to keep a local checkout of the wiki at `wiki/` inside this repo's working tree (gitignored from the main repo) so both repos sit side-by-side on disk:
+
+```sh
+cd <repo-root>
+git clone https://github.com/aditya-m-bharadwaj/APIskillBuilderSkill.wiki.git wiki
+cd wiki
+# edit pages
+git commit -am "wiki: ..."
+git push
+```
+
+`wiki/` is in `.gitignore` here, so the main repo will never see the nested `.git/`. Don't remove the gitignore entry — without it, the nested repo gets treated as an accidental gitlink and breaks `git add` / `git status` in the main repo.
+
+**Page conventions:**
+
+- Filenames are `Page-Name.md` at the wiki repo root (no subdirectories — GitHub wikis are flat).
+- Internal wiki-to-wiki links use `[[Page Name]]`.
+- Links from wiki to this repo use absolute `https://github.com/aditya-m-bharadwaj/APIskillBuilderSkill/blob/main/...` URLs. Relative paths don't work — the wiki is a separate repo.
+- Special files: `_Sidebar.md` (right-side nav), `_Footer.md` (footer), `Home.md` (landing).
+
+**What belongs where:**
+
+| Wiki | `docs/` |
+| --- | --- |
+| Getting-started, tutorials, conceptual overviews | ADRs (architectural decision records) |
+| FAQ, roadmap, opinionated framing | Progress notes (session memory) |
+| Audience: humans on github.com | Audience: code authors + AI agents |
+| Evolves continuously | Versioned alongside code, reviewed in PRs |
+
+**Canonical content lives in `docs/`**, not the wiki. When the two disagree on a fact, `docs/` wins and the wiki page is updated to match. Never put the safety contract, API tokens, or operator personal info on the wiki — its history is public and immutable.
+
+If you don't have write access to the wiki repo, open an issue here describing the proposed change instead. GitHub wikis don't natively accept pull requests.
+
 ## Code of conduct
 
 Be kind. Disagree on the merits. The threat model is real and the safety contract is the reason this skill exists — keep that front of mind.

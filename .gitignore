@@ -21,3 +21,10 @@ graphify-out/
 # Any local working drafts of scaffolded projects under templates/
 # experiments shouldn't leak. (None tracked yet; placeholder.)
 scratch/
+
+# GitHub wiki working clone. The wiki lives at <repo>.wiki.git — a separate
+# git repository with its own history and remote. We keep a checkout here
+# for convenience (so the operator can cd into one directory and reach
+# both repos), but the main repo must never try to track the nested
+# .git directory. See wiki/Contributing-to-the-Wiki for the workflow.
+wiki/

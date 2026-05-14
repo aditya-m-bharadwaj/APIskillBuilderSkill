@@ -260,6 +260,49 @@ After the operator authorizes the push and the commit lands on `origin/main`, co
 
 **Pages / Webhooks / Actions secrets**: leave as default. No docs site is published; no secrets are needed by CI.
 
+**Bootstrap the wiki.** The wiki is a separate git repository (`<repo>.wiki.git`) that GitHub provisions only after a first page is saved through the web UI. **You (the AI) cannot create this repo via `gh` or any other automated path** — `gh repo create <slug>.wiki` fails with *"The repository &lt;slug&gt;.wiki cannot end in .wiki"* because GitHub reserves the `.wiki` suffix for auto-provisioned wiki repos. Cloning `<slug>.wiki.git` returns *"Repository not found"* until the operator has saved a page.
+
+**→ Stop here and ask the operator to bootstrap the wiki manually.** Direct them to:
+
+1. Open `https://github.com/<owner>/<slug>/wiki` in a browser.
+2. Click **"Create the first page"** and save anything (the default *"Welcome to the wiki!"* body is fine — it will be overwritten in a moment).
+3. Confirm back to you that the page saved.
+
+Only after the operator confirms can you proceed. Then clone the now-existing wiki repo, replay starter pages over GitHub's placeholder, and push:
+
+```sh
+# In the project root, AFTER the operator has saved the first wiki page:
+git clone https://github.com/<owner>/<slug>.wiki.git wiki
+echo 'wiki/' >> .gitignore           # main repo never tracks the nested .git
+cd wiki
+# GitHub-provisioned wikis default to the `master` branch, not `main`.
+# Don't fight it; commit on master so push succeeds without surgery.
+# Author / copy in the starter pages (this overwrites GitHub's auto Home.md):
+# ... write Home.md, _Sidebar.md, _Footer.md, Getting-Started.md, etc.
+git add -A
+git commit -m "wiki: initial seed (v0.1.0-alpha.1 surface)"
+git push -u origin master
+```
+
+The minimum-viable starter page set (mirror the `APIskillBuilderSkill` wiki):
+
+- `Home.md` — landing page with the safety pitch in one paragraph + navigation.
+- `_Sidebar.md` — right-side nav (Concepts / Reference / Contribute / Links).
+- `_Footer.md` — short repo / license footer.
+- `Getting-Started.md` — install, prerequisites, first invocation.
+- `How-It-Works.md` — conceptual overview of how the CLI + runtime skill relate.
+- `Hard-Rules.md` — annotated version of the safety contract.
+- `Six-Tier-Safety-Classifier.md` — tier table + classification logic.
+- `Build-Process.md` — annotated build/use steps if relevant for downstream users.
+- `ADR-Index.md` — one-line summaries linking to each `docs/decisions/<NNNN>-*.md` file.
+- `FAQ.md` — open questions and deliberate non-goals.
+- `Roadmap.md` — near / medium / long-term + explicitly out-of-scope items.
+- `Contributing-to-the-Wiki.md` — clone-edit-push workflow + page conventions.
+
+Page conventions: filenames are `Page-Name.md` at the wiki root (no subdirectories — GitHub wikis are flat); internal links use `[[Page Name]]`; links from wiki to the main repo use **absolute** `https://github.com/<owner>/<slug>/blob/main/...` URLs because the two repos are separate. Wiki pages **summarize and link to** canonical content in `docs/`; they do not replace it. When the wiki and `docs/` disagree, `docs/` wins.
+
+Add a "Contributing to the wiki" section to the generated project's `CONTRIBUTING.md` describing the local workflow and the `docs/` vs. wiki split — so a future contributor knows how to clone, edit, push, and where canonical content lives.
+
 **Run this step right after the first push lands.** The default GitHub presets for a brand-new repo are not what the safety contract assumes — at minimum, private vulnerability reporting must be on (or `SECURITY.md`'s instructions are a dead link), and the description / topics must be set so users discover the project at all.
 
 After configuring, paste the live About-panel description and the comma-separated topic list back to the operator for verification.
