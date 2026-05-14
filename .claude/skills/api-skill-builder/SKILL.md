@@ -61,7 +61,7 @@ Drop in the LICENSE (MIT, copyright "<slug> contributors"), `.gitignore` (mirror
 └── settings.json                 ← graphify PreToolUse hook (installed by `graphify claude install`)
 
 .github/
-├── workflows/ci.yml
+├── workflows/{ci,codeql}.yml
 ├── ISSUE_TEMPLATE/{bug_report,feature_request,config}.{md,yml}
 ├── DISCUSSION_TEMPLATE/{q-and-a,ideas,show-and-tell}.yml
 └── FUNDING.yml
@@ -171,6 +171,7 @@ For each, copy the corresponding file from `linode-api-skill` and rewrite for th
 Copy from `linode-api-skill/.github/`:
 
 - `workflows/ci.yml` — 3 OS × Python 3.8–3.12 matrix (exclude macOS 3.8/3.9 — runner images don't ship them). Steps: `py_compile`, `unittest discover tests`, smoke `<slug> classify` on a read and a destructive path. Separate `shellcheck install.sh` job on Ubuntu.
+- `workflows/codeql.yml` — GitHub's CodeQL static analysis. Matrix over `python` (the CLI is Python; rules catch path-traversal, injection, weak crypto, etc.) and `actions` (lints the workflow files themselves for token-scope and untrusted-input issues). Triggers on push to `main`, PR to `main`, and a weekly cron. `build-mode: none` — the CLI is stdlib-only so there's nothing to compile. Pair with "Code scanning" enabled in repo settings (Step 14). The canonical template lives in this skill's own repo at `APIskillBuilderSkill/.github/workflows/codeql.yml`; for a generated vendor skill, copy it and add `python` alongside `actions` in the language matrix.
 - `ISSUE_TEMPLATE/{bug_report,feature_request}.md` and `config.yml` — `config.yml` disables blank issues and points contact links at the private security advisory page, `SECURITY.md`, and Discussions.
 - `DISCUSSION_TEMPLATE/{q-and-a,ideas,show-and-tell}.yml`.
 - `FUNDING.yml` — fill in `github: [<operator-username>]`; comment out the rest.
@@ -251,7 +252,7 @@ After the operator authorizes the push and the commit lands on `origin/main`, co
 - **Dependabot security updates**: **enable**.
 - **Secret scanning** (free on public repos): **enable**.
 - **Push protection** (blocks pushes containing detected secrets): **enable**.
-- CodeQL / code scanning: optional — low value for a stdlib-only single-file CLI; skip unless extending later.
+- **Code scanning (CodeQL)**: **enable**. The workflow ships at `.github/workflows/codeql.yml` (Step 9) and analyzes the Python CLI and the workflow files themselves. Even on a stdlib-only single-file CLI, CodeQL catches path-traversal, command-injection, weak-crypto, and untrusted-input-into-action patterns that the classifier doesn't see. The weekly cron also re-scans against updated rule packs.
 
 **Branch protection** (Settings → Branches):
 
